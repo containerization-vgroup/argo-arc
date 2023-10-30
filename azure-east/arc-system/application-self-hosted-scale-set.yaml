@@ -40,7 +40,7 @@ spec:
                 - name: work
                   mountPath: /home/runner/work
                 - name: cache
-                  mountPath:/opt/hostedtoolcache
+                  mountPath: /opt/hostedtoolcache
                   
             volumes:
             - name: work
