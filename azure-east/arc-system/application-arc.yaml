@@ -20,16 +20,14 @@ spec:
   source:
     repoURL: https://github.com/argoproj/argocd-example-apps.git
     targetRevision: HEAD
-    path: guestbook
+    path: helm-guestbook
 
     # helm specific config
     helm:
       # Extra parameters to set (same as setting through values.yaml, but these take precedence)
       parameters:
-      - name: "nginx-ingress.controller.service.annotations.external-dns\\.alpha\\.kubernetes\\.io/hostname"
-        value: mydomain.example.com
       - name: "ingress.annotations.kubernetes\\.io/tls-acme"
-        value: "true"
+        value: "false"
         forceString: true # ensures that value is treated as a string
 
       # Release name override (defaults to application name)
@@ -38,7 +36,7 @@ spec:
       # Helm values files for overriding values in the helm chart
       # The path is relative to the spec.source.path directory defined above
       valueFiles:
-      - values-prod.yaml
+      - values.yaml
 
       # Values file as block file
       values: |
