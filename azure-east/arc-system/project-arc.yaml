@@ -13,6 +13,12 @@ spec:
   # Allow manifests to deploy from any Git repos
   sourceRepos:
   - '*'
+  destinations:
+  - namespace: '*'
+    server: '*'
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
 
   # Only permit applications to deploy to the guestbook namespace in the same cluster
   # destinations:
