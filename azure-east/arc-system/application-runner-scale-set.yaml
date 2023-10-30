@@ -27,6 +27,21 @@ spec:
         controllerServiceAccount:
           namespace: arc-system
           name: arc-gha-rs-controller
+          template:
+            spec:
+              containers:
+                - name: runner
+                  image: ghcr.io/actions/actions-runner:latest
+                  command: ["/home/runner/run.sh"]
+                  env:
+                  - name: runtime
+                    value: "kubernetes"
+                  volumeMounts:
+                  - name: work
+                    mountPath: /home/runner/work
+              volumes:
+              - name: work
+                emptyDir: {}
       # Optional Helm version to template with. If omitted it will fallback to look at the 'apiVersion' in Chart.yaml
       # and decide which Helm binary to use automatically. This field can be either 'v2' or 'v3'.
       version: v3
