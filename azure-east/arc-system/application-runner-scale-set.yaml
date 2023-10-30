@@ -22,7 +22,7 @@ spec:
       # Release name override (defaults to application name)
       releaseName: "arc-runners"
       values: |
-        githubConfigUrl: "https://jcantosz-004d0816a07f22097.ghe-test.net"
+        githubConfigUrl: "https://jcantosz-004d0816a07f22097.ghe-test.net/import"
         githubConfigSecret: "self-hosted-scale-set"
         controllerServiceAccount:
           namespace: arc-system
