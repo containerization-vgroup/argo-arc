@@ -12,7 +12,7 @@ metadata:
       prune: true
     syncOptions:
     - CreateNamespace=true
-    - ServerSideApply=true
+    - server-side-apply=true
 spec:
   # The project the application belongs to.
   project: arc
