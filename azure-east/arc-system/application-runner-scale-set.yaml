@@ -24,6 +24,9 @@ spec:
       values: |
         githubConfigUrl: "https://jcantosz-004d0816a07f22097.ghe-test.net"
         githubConfigSecret: "self-hosted-scale-set"
+        controllerServiceAccount:
+          namespace: arc-system
+          name: arc-gha-rs-controller
       # Optional Helm version to template with. If omitted it will fallback to look at the 'apiVersion' in Chart.yaml
       # and decide which Helm binary to use automatically. This field can be either 'v2' or 'v3'.
       version: v3
