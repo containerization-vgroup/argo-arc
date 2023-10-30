@@ -14,7 +14,7 @@ metadata:
     - CreateNamespace=true
 spec:
   # The project the application belongs to.
-  project: arc-system
+  project: arcos
 
   # Source of the application manifests
   source:
