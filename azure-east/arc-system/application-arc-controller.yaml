@@ -20,7 +20,7 @@ spec:
   source:
     repoURL: ghcr.io/actions/actions-runner-controller-charts
     targetRevision: 0.6.1
-    path: gha-runner-scale-set-controller
+    chart: gha-runner-scale-set-controller
 
     # helm specific config
     helm:
