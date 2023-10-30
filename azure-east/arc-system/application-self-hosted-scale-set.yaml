@@ -39,8 +39,13 @@ spec:
                 volumeMounts:
                 - name: work
                   mountPath: /home/runner/work
+                - name: cache
+                  mountPath:/opt/hostedtoolcache
+                  
             volumes:
             - name: work
+              emptyDir: {}
+            - name: cache
               emptyDir: {}
       # Optional Helm version to template with. If omitted it will fallback to look at the 'apiVersion' in Chart.yaml
       # and decide which Helm binary to use automatically. This field can be either 'v2' or 'v3'.
