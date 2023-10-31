@@ -3,6 +3,7 @@ kind: Application
 metadata:
   name: metrics
 spec:
+  project: arc
   source:
     repoURL: https://github.com/jcantosz/github-metrics.git
     targetRevision: patch-1
