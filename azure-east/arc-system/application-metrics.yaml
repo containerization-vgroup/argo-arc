@@ -7,7 +7,7 @@ spec:
   source:
     repoURL: https://github.com/jcantosz/github-metrics.git
     targetRevision: patch-1
-    path: kubernetes
+    path: .
 
     kustomize:
       namespace: arc-metrics
