@@ -1,0 +1,12 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metrics
+spec:
+  source:
+    repoURL: https://github.com/jcantosz/github-metrics.git
+    targetRevision: patch-1
+    path: kubernetes
+
+    kustomize:
+      namespace: arc-metrics
