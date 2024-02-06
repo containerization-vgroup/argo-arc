@@ -22,8 +22,8 @@ spec:
       # Release name override (defaults to application name)
       releaseName: "self-hosted"
       values: |
-        githubConfigUrl: "https://jcantosz-004d0816a07f22097.ghe-test.net/import"
-        githubConfigSecret: "self-hosted-scale-set"
+        githubConfigUrl: "https://github.com/containerization-vgroup"
+        githubConfigSecret: "pre-defined-secret"
         controllerServiceAccount:
           namespace: arc-system
           name: arc-gha-rs-controller
