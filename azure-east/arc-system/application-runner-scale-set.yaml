@@ -29,14 +29,14 @@ spec:
           name: arc-gha-rs-controller
         minRunners: 2
         maxRunners: 10
-        runnerGroup="arc-runners"
+        runnerGroup: "arc-runners"
         listenerTemplate:
           spec:
             containers:
             - name: listener
           metadata:
             annotations:
-              "prometheus.io/scrape": "true"
+              "prometheus.io/scrape": true
               "prometheus.io/path": "/metrics"
               "prometheus.io/port": "8080"       
         template:
