@@ -12,7 +12,7 @@ spec:
   project: default
   source:
     path: azure-east/arc-system
-    repoURL: https://github.com/jcantosz/argo-arc.git
+    repoURL: https://github.com/containerization-vgroup/argo-arc.git
     targetRevision: HEAD
   syncPolicy:
     automated:
