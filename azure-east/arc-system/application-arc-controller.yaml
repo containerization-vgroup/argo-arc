@@ -24,6 +24,11 @@ spec:
           controllerManagerAddr: ":8080"
           listenerAddr: ":8080"
           listenerEndpoint: "/metrics"
+        podAnnotations:
+          prometheus.io/scrape: true
+          prometheus.io/path: "/metrics"
+          prometheus.io/port: 8080
+
 
       # Optional Helm version to template with. If omitted it will fallback to look at the 'apiVersion' in Chart.yaml
       # and decide which Helm binary to use automatically. This field can be either 'v2' or 'v3'.
