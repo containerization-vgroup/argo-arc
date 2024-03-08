@@ -26,5 +26,5 @@ spec:
     automated:
       prune: true
 ```
-1. Create github app, create secrets in k8s, create runner definitions
+1. Create github app ([permissions](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller/authenticating-to-the-github-api#authenticating-arc-with-a-github-app)), create secrets in k8s, create runner definitions (already have some if you installed bootstrap.yaml, above)
   - `kubectl create secret generic pre-defined-secret --namespace=arc-runners --from-literal=github_app_id=123456 --from-literal=github_app_installation_id=654321 --from-literal=github_app_private_key='-----BEGIN CERTIFICATE-----*******'`
