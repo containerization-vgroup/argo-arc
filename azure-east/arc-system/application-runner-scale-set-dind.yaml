@@ -1,0 +1,90 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: arc-runners-d-in-d
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: arc
+  source:
+    repoURL: ghcr.io/actions/actions-runner-controller-charts
+    targetRevision: 0.6.1
+    chart: gha-runner-scale-set
+    helm:
+      releaseName: "arc-runners-d-in-d"
+      values: |
+        githubConfigUrl: "https://github.com/containerization-vgroup"
+        githubConfigSecret: "pre-defined-secret"
+        controllerServiceAccount:
+          namespace: arc-system
+          name: arc-gha-rs-controller
+        minRunners: 2
+        maxRunners: 10
+        runnerGroup: "arc-runners-d-in-d"
+        listenerTemplate:
+          spec:
+            containers:
+            - name: listener
+          metadata:
+            annotations:
+              "prometheus.io/scrape": "true"
+              "prometheus.io/path": "/metrics"
+              "prometheus.io/port": "8080"       
+        template:
+          spec:
+            containers:
+              - name: runner
+                image: ghcr.io/actions/actions-runner:latest
+                command: ["/home/runner/run.sh"]
+                env:
+                - name: runtime
+                  value: "kubernetes"
+                - name: DOCKER_HOST
+                  value: "tcp://localhost:2375"
+                volumeMounts:
+                - name: work
+                  mountPath: /home/runner/work
+                - name: docker-socket
+                  mountPath: /var/run/docker.sock
+            volumes:
+            - name: work
+              emptyDir: {}
+            - name: docker-socket
+              emptyDir: {} # Using emptyDir to support rootless mode
+            initContainers:
+            - name: dind-rootless
+              image: docker:20.10-dind-rootless
+              securityContext:
+                runAsUser: 1000
+                runAsGroup: 1000
+                privileged: false
+              volumeMounts:
+              - name: docker-socket
+                mountPath: /var/run/docker.sock
+              env:
+              - name: DOCKER_TLS_CERTDIR
+                value: ""
+              - name: DOCKER_HOST
+                value: "tcp://localhost:2375"
+              - name: DOCKER_DRIVER
+                value: "overlay2"
+      version: v3
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: arc-runners-d-in-d
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+    - Validate=false
+    - CreateNamespace=true
+    - ServerSideApply=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
