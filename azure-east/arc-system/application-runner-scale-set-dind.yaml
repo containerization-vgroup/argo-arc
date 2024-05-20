@@ -54,11 +54,11 @@ spec:
               emptyDir: {}  # Create an empty directory volume for Docker socket (supports rootless mode)
             initContainers:
             - name: dind-rootless  # Name of the init container for DIND rootless
-              image: docker:20.10-dind-rootless  # Docker image for DIND rootless
+              image: docker:26.1-dind-rootless  # Docker image for DIND rootless
               securityContext:
                 runAsUser: 1000  # Run as non-root user
                 runAsGroup: 1000  # Run as non-root group
-                privileged: false  # Do not run in privileged mode
+                privileged: true  # Required for disabling seccomp, AppArmor, and mount masks
               volumeMounts:
               - name: docker-socket
                 mountPath: /var/run/docker.sock  # Mount Docker socket volume
@@ -69,6 +69,7 @@ spec:
                 value: "tcp://localhost:2375"  # Set Docker host
               - name: DOCKER_DRIVER
                 value: "overlay2"  # Set Docker storage driver
+              restartPolicy: Always  # Ensure the init container restarts if it fails
       version: v3  # Helm version to use
 
   destination:
