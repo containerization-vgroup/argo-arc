@@ -69,7 +69,6 @@ spec:
                 value: "tcp://localhost:2375"  # Set Docker host
               - name: DOCKER_DRIVER
                 value: "overlay2"  # Set Docker storage driver
-              restartPolicy: Always  # Ensure the init container restarts if it fails
       version: v3  # Helm version to use
 
   destination:
