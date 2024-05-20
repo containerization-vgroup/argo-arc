@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1  # API version for Argo CD Application
 kind: Application  # Kind of the resource
 metadata:
-  name: arc-runners-d-in-d  # Name of the Argo CD application
+  name: arc-runners-d-in-d-rootless  # Name of the Argo CD application
   namespace: argocd  # Namespace where Argo CD application resides
   finalizers:
     - resources-finalizer.argocd.argoproj.io  # Ensures resources are cleaned up when the application is deleted
@@ -12,7 +12,7 @@ spec:
     targetRevision: 0.6.1  # Version of the Helm chart to use
     chart: gha-runner-scale-set  # Helm chart name
     helm:
-      releaseName: "arc-runners-d-in-d"  # Override the Helm release name
+      releaseName: "arc-runners-d-in-d-rootless"  # Override the Helm release name
       values: |  # Inline Helm values for customizing the deployment
         githubConfigUrl: "https://github.com/containerization-vgroup"  # URL for the GitHub configuration
         githubConfigSecret: "pre-defined-secret"  # Kubernetes secret with GitHub token
@@ -21,7 +21,7 @@ spec:
           name: arc-gha-rs-controller  # Name of the service account
         minRunners: 2  # Minimum number of runners
         maxRunners: 10  # Maximum number of runners
-        runnerGroup: "arc-runners-d-in-d"  # GitHub runner group name
+        runnerGroup: "arc-runners-d-in-d-rootless"  # GitHub runner group name
         listenerTemplate:
           spec:
             containers:
@@ -73,7 +73,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc  # Kubernetes API server URL
-    namespace: arc-runners-d-in-d  # Namespace to deploy the application
+    namespace: arc-runners-d-in-d-rootless  # Namespace to deploy the application
 
   syncPolicy:
     automated:
