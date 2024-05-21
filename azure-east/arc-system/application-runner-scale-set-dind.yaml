@@ -1,90 +1,90 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Application
+apiVersion: argoproj.io/v1alpha1  # Specifies the API version for Argo CD Application
+kind: Application  # Specifies the kind of resource, in this case, an Argo CD Application
 metadata:
-  name: arc-runners-d-in-d-rootless
-  namespace: argocd
+  name: arc-runners-d-in-d-rootless  # Name of the Argo CD application
+  namespace: argocd  # Namespace where the Argo CD application resides
   finalizers:
-    - resources-finalizer.argocd.argoproj.io
+    - resources-finalizer.argocd.argoproj.io  # Ensures resources are cleaned up when the application is deleted
 spec:
-  project: arc
+  project: arc  # Specifies the project in Argo CD where the application belongs
   source:
-    repoURL: ghcr.io/actions/actions-runner-controller-charts
-    targetRevision: 0.6.1
-    chart: gha-runner-scale-set
+    repoURL: ghcr.io/actions/actions-runner-controller-charts  # Specifies the repository URL for the Helm chart
+    targetRevision: 0.6.1  # Specifies the version of the Helm chart to use
+    chart: gha-runner-scale-set  # Specifies the Helm chart name
     helm:
-      releaseName: "arc-runners-d-in-d-rootless"
-      values: |
-        githubConfigUrl: "https://github.com/containerization-vgroup"
-        githubConfigSecret: "pre-defined-secret"
+      releaseName: "arc-runners-d-in-d-rootless"  # Overrides the Helm release name
+      values: |  # Inline Helm values for customizing the deployment
+        githubConfigUrl: "https://github.com/containerization-vgroup"  # URL for the GitHub configuration
+        githubConfigSecret: "pre-defined-secret"  # Kubernetes secret with GitHub token
         controllerServiceAccount:
-          namespace: arc-system
-          name: arc-gha-rs-controller
-        minRunners: 2
-        maxRunners: 10
-        runnerGroup: "arc-runners-d-in-d-rootless"
+          namespace: arc-system  # Namespace for the controller's service account
+          name: arc-gha-rs-controller  # Name of the service account
+        minRunners: 2  # Minimum number of runners
+        maxRunners: 10  # Maximum number of runners
+        runnerGroup: "arc-runners-d-in-d-rootless"  # GitHub runner group name
         listenerTemplate:
           spec:
             containers:
-            - name: listener
+            - name: listener  # Name of the listener container
           metadata:
             annotations:
-              "prometheus.io/scrape": "true"
-              "prometheus.io/path": "/metrics"
-              "prometheus.io/port": "8080"
+              "prometheus.io/scrape": "true"  # Enable Prometheus scraping
+              "prometheus.io/path": "/metrics"  # Metrics path for Prometheus
+              "prometheus.io/port": "8080"  # Port for Prometheus to scrape
         template:
           spec:
             containers:
-              - name: runner
-                image: ghcr.io/actions/actions-runner:latest
-                command: ["/home/runner/run.sh"]
+              - name: runner  # Name of the runner container
+                image: ghcr.io/actions/actions-runner:latest  # Docker image for the runner
+                command: ["/home/runner/run.sh"]  # Command to run inside the container
                 env:
                 - name: runtime
-                  value: "kubernetes"
+                  value: "kubernetes"  # Set runtime environment
                 - name: DOCKER_HOST
-                  value: "tcp://localhost:2375"
+                  value: "tcp://localhost:2375"  # Set Docker host for DIND
                 volumeMounts:
                 - name: work
-                  mountPath: /home/runner/work
+                  mountPath: /home/runner/work  # Mount path for work directory
                 - name: docker-socket
-                  mountPath: /var/run/docker.sock
-              - name: dind-rootless
-                image: docker:26.1-dind-rootless
+                  mountPath: /var/run/docker.sock  # Mount path for Docker socket
+              - name: dind-rootless  # Name of the dind-rootless container
+                image: docker:26.1-dind-rootless  # Docker image for DIND rootless
                 securityContext:
-                  runAsUser: 1000
-                  runAsGroup: 1000
+                  runAsUser: 1000  # Run as non-root user
+                  runAsGroup: 1000  # Run as non-root group
                 volumeMounts:
                 - name: docker-socket
-                  mountPath: /var/run/docker.sock
+                  mountPath: /var/run/docker.sock  # Mount Docker socket volume
                 env:
                 - name: DOCKER_TLS_CERTDIR
-                  value: ""
+                  value: ""  # Disable TLS for Docker
                 - name: DOCKER_HOST
-                  value: "tcp://localhost:2375"
+                  value: "tcp://localhost:2375"  # Set Docker host
                 - name: DOCKER_DRIVER
-                  value: "overlay2"
+                  value: "overlay2"  # Set Docker storage driver
             volumes:
             - name: work
-              emptyDir: {}
+              emptyDir: {}  # Create an empty directory volume for work
             - name: docker-socket
-              emptyDir: {}
-      version: v3
+              emptyDir: {}  # Create an empty directory volume for Docker socket (supports rootless mode)
+      version: v3  # Helm version to use
 
   destination:
-    server: https://kubernetes.default.svc
-    namespace: arc-runners-d-in-d-rootless
+    server: https://kubernetes.default.svc  # Kubernetes API server URL
+    namespace: arc-runners-d-in-d-rootless  # Namespace to deploy the application
 
   syncPolicy:
     automated:
-      prune: true
-      selfHeal: true
-      allowEmpty: false
+      prune: true  # Automatically prune resources that are no longer defined in the source
+      selfHeal: true  # Automatically sync if the cluster state changes
+      allowEmpty: false  # Do not allow empty application (no resources)
     syncOptions:
-    - Validate=false
-    - CreateNamespace=true
-    - ServerSideApply=true
+    - Validate=false  # Disable resource validation
+    - CreateNamespace=true  # Automatically create the target namespace if it doesn't exist
+    - ServerSideApply=true  # Use server-side apply for resource management
     retry:
-      limit: 5
+      limit: 5  # Number of retry attempts for failed syncs
       backoff:
-        duration: 5s
-        factor: 2
-        maxDuration: 3m
+        duration: 5s  # Initial backoff duration
+        factor: 2  # Backoff factor
+        maxDuration: 3m  # Maximum backoff duration
