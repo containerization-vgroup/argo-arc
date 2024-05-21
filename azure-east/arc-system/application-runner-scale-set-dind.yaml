@@ -1,18 +1,18 @@
-apiVersion: argoproj.io/v1alpha1  # Specifies the API version for Argo CD Application
-kind: Application  # Specifies the kind of resource, in this case, an Argo CD Application
+apiVersion: argoproj.io/v1alpha1  # API version for Argo CD Application
+kind: Application  # Kind of the resource
 metadata:
   name: arc-runners-d-in-d-rootless  # Name of the Argo CD application
-  namespace: argocd  # Namespace where the Argo CD application resides
+  namespace: argocd  # Namespace where Argo CD application resides
   finalizers:
     - resources-finalizer.argocd.argoproj.io  # Ensures resources are cleaned up when the application is deleted
 spec:
-  project: arc  # Specifies the project in Argo CD where the application belongs
+  project: arc  # Project in Argo CD where the application belongs
   source:
-    repoURL: ghcr.io/actions/actions-runner-controller-charts  # Specifies the repository URL for the Helm chart
-    targetRevision: 0.6.1  # Specifies the version of the Helm chart to use
-    chart: gha-runner-scale-set  # Specifies the Helm chart name
+    repoURL: ghcr.io/actions/actions-runner-controller-charts  # Repository URL for the Helm chart
+    targetRevision: 0.6.1  # Version of the Helm chart to use
+    chart: gha-runner-scale-set  # Helm chart name
     helm:
-      releaseName: "arc-runners-d-in-d-rootless"  # Overrides the Helm release name
+      releaseName: "arc-runners-d-in-d-rootless"  # Override the Helm release name
       values: |  # Inline Helm values for customizing the deployment
         githubConfigUrl: "https://github.com/containerization-vgroup"  # URL for the GitHub configuration
         githubConfigSecret: "pre-defined-secret"  # Kubernetes secret with GitHub token
@@ -52,6 +52,7 @@ spec:
                 securityContext:
                   runAsUser: 1000  # Run as non-root user
                   runAsGroup: 1000  # Run as non-root group
+                  privileged: true  # Required for disabling seccomp, AppArmor, and mount masks
                 volumeMounts:
                 - name: docker-socket
                   mountPath: /var/run/docker.sock  # Mount Docker socket volume
