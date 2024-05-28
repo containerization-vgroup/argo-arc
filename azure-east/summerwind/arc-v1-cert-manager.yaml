@@ -19,6 +19,8 @@ spec:
 
     # helm specific config
     helm:
+      values: |
+        installCRDs: true
       # Optional Helm version to template with. If omitted it will fallback to look at the 'apiVersion' in Chart.yaml
       # and decide which Helm binary to use automatically. This field can be either 'v2' or 'v3'.
       version: v3
