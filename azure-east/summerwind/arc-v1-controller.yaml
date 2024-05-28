@@ -14,7 +14,7 @@ spec:
   # Source of the application manifests
   source:
     repoURL: https://actions-runner-controller.github.io/actions-runner-controller
-    targetRevision: 0.6.1
+    targetRevision: 0.23.7
     chart: gha-runner-scale-set-controller
 
     # helm specific config
