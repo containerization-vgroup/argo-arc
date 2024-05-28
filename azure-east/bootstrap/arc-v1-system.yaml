@@ -11,7 +11,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: summerwind
+    path: azure-east/summerwind
     repoURL: https://github.com/containerization-vgroup/argo-arc.git
     targetRevision: HEAD
   syncPolicy:
