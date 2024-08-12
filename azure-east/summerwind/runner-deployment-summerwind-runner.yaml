@@ -1,13 +1,17 @@
+# containerization-vgroup
 apiVersion: actions.summerwind.dev/v1alpha1
-kind: RunnerSet
+kind: RunnerDeployment
 metadata:
   name: summerwind-runner
-  namespace: 
+  namespace: summerwind-runners
 spec:
+  # This will deploy 2 runners now
   replicas: 1
   template:
     spec:
-      repository: actions/actions-runner-controller
+      organization: containerization-vgroup
+      group: summerwind
+      # will get self-hosted, Linux, X64 by default + these labels
       labels:
-        - summerwind
-        - arcv1
+       - summerwind
+       - arcv1
