@@ -1,0 +1,13 @@
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerSet
+metadata:
+  name: summerwind-runner
+  namespace: 
+spec:
+  replicas: 1
+  template:
+    spec:
+      repository: actions/actions-runner-controller
+      labels:
+        - summerwind
+        - arcv1
