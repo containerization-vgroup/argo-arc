@@ -2,6 +2,10 @@
 Argo config for actions runner controller (arc) cluster
 
 1. [Install ArgoCD](https://argo-cd.readthedocs.io/en/stable/getting_started/#1-install-argo-cd)
+   1. Via helm: https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd
+   1. `helm repo add argo https://argoproj.github.io/argo-helm`
+   1. `helm upgrade --install argocd argo/argo-cd -f argocd-helm/values.yaml --namespace argocd --create-namespace # tolerate azure spot instances`
+1. Get login info
    1. Get the generated admin password `kubectl -n argocd get secret argocd-initial-admin-secret -ojsonpath={.data.password} | base64 --decode | pbcopy`
    1. Get access to the ArgoCD UI: `kubectl -n argocd port-forward svc/argocd-server 8080:80` (https://localhost:8080)
    1. Log in with `admin/<paste password from clipboard>`
