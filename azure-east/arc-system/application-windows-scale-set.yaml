@@ -1,0 +1,93 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: windows-runner-set
+  # You'll usually want to add your resources to the argocd namespace.
+  namespace: argocd
+  # Add a this finalizer ONLY if you want these to cascade delete.
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  # The project the application belongs to.
+  project: arc
+
+  # Source of the application manifests
+  source:
+    repoURL: ghcr.io/actions/actions-runner-controller-charts
+    targetRevision: 0.9.3
+    chart: gha-runner-scale-set
+
+    # helm specific config
+    helm:
+      # Release name override (defaults to application name)
+      releaseName: "windows"
+      # Regcred secret created with https://kubernetes.io/docs/reference/kubectl/generated/kubectl_create/kubectl_create_secret_docker-registry/
+      # TODO: put in keyvault
+      values: |
+        githubConfigUrl: "https://github.com/containerization-vgroup"
+        githubConfigSecret: "pre-defined-secret"
+        controllerServiceAccount:
+          namespace: arc-system
+          name: arc-gha-rs-controller
+        listenerTemplate:
+          spec:
+            containers:
+            - name: listener
+          metadata:
+            annotations:
+              "prometheus.io/scrape": "true"
+              "prometheus.io/path": "/metrics"
+              "prometheus.io/port": "8080"
+        template:
+          spec:
+            containers:
+              - name: runner
+                image: ghcr.io/containerization-vgroup/arc-windows-runner:2.321.0
+                imagePullPolicy: Always
+                command: ["cmd.exe", "/c", "\\home\\runner\\run.cmd"]
+            imagePullSecrets:
+              - name: regcred
+            tolerations:
+              - key: kubernetes.io/os
+                operator: Equal
+                value: windows
+                effect: NoSchedule
+            affinity:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: kubernetes.io/os
+                          operator: In
+                          values:
+                            - windows
+            volumes:
+            - name: work
+              emptyDir: {}
+            - name: cache
+              emptyDir: {}
+      # Optional Helm version to template with. If omitted it will fallback to look at the 'apiVersion' in Chart.yaml
+      # and decide which Helm binary to use automatically. This field can be either 'v2' or 'v3'.
+      version: v3
+
+  # Destination cluster and namespace to deploy the application
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: arc-runners
+
+  # Sync policy
+  syncPolicy:
+    automated: # automated sync by default retries failed attempts 5 times with following delays between attempts ( 5s, 10s, 20s, 40s, 80s ); retry controlled using `retry` field.
+      prune: true # Specifies if resources should be pruned during auto-syncing ( false by default ).
+      selfHeal: true # Specifies if partial app sync should be executed when resources are changed only in target Kubernetes cluster and no git change detected ( false by default ).
+    syncOptions:     # Sync options which modifies sync behavior
+    - Validate=false # disables resource validation (equivalent to 'kubectl apply --validate=true')
+    - CreateNamespace=true # Namespace Auto-Creation ensures that namespace specified as the application destination exists in the destination cluster.
+    - ServerSideApply=true
+    # The retry feature is available since v1.7
+    retry:
+      limit: 5 # number of failed sync attempt retries; unlimited number of attempts if less than 0
+      backoff:
+        duration: 5s # the amount to back off. Default unit is seconds, but could also be a duration (e.g. "2m", "1h")
+        factor: 2 # a factor to multiply the base duration after each failed retry
+        maxDuration: 3m # the maximum amount of time allowed for the backoff strategy
