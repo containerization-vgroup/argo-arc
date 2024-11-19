@@ -3,7 +3,7 @@ kind: Application
 metadata:
   finalizers:
   - resources-finalizer.argocd.argoproj.io
-  name: arc-v1-system
+  name: summerwind-system
   namespace: argocd
 spec:
   destination:

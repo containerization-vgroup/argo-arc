@@ -9,7 +9,7 @@ spec:
   project: arc  # Project in Argo CD where the application belongs
   source:
     repoURL: ghcr.io/actions/actions-runner-controller-charts  # Repository URL for the Helm chart
-    targetRevision: 0.6.1  # Version of the Helm chart to use
+    targetRevision: 0.9.3  # Version of the Helm chart to use
     chart: gha-runner-scale-set  # Helm chart name
     helm:
       releaseName: "arc-runners-d-in-d-rootless"  # Override the Helm release name
