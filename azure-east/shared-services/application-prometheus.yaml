@@ -28,12 +28,9 @@ spec:
   ignoreDifferences: # Anti-flapping
     - group: apps
       kind: StatefulSet
-      jsonPointers:
-      - /spec/volumeClaimTemplates/-/apiVersion
-      
-      # jqPathExpressions
-      #  - .spec.volumeClaimTemplates[].apiVersion
-      # - .spec.volumeClaimTemplates[].kind
+      jqPathExpressions:
+      - .spec.volumeClaimTemplates[].apiVersion
+      - .spec.volumeClaimTemplates[].kind
   # Destination cluster and namespace to deploy the application
   destination:
     server: https://kubernetes.default.svc
