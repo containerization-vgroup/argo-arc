@@ -29,11 +29,7 @@ spec:
     - group: apps
       kind: StatefulSet
       jsonPointers:
-      - /spec/volumeClaimTemplates/ApiVersion
-    - group: apps
-      kind: StatefulSet
-      jsonPointers:
-      - /spec/volumeClaimTemplates/kind
+      - /spec/volumeClaimTemplates
   # Destination cluster and namespace to deploy the application
   destination:
     server: https://kubernetes.default.svc
