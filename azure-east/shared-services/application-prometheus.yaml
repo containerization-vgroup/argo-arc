@@ -25,6 +25,15 @@ spec:
       # and decide which Helm binary to use automatically. This field can be either 'v2' or 'v3'.
       version: v3
 
+  ignoreDifferences: # Anti-flapping
+    - group: apps
+      kind: StatefulSet
+      jsonPointers:
+      - /spec/volumeClaimTemplates/ApiVersion
+    - group: apps
+      kind: StatefulSet
+      jsonPointers:
+      - /spec/volumeClaimTemplates/kind
   # Destination cluster and namespace to deploy the application
   destination:
     server: https://kubernetes.default.svc
