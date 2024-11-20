@@ -52,6 +52,14 @@ spec:
                 operator: Equal
                 value: windows
                 effect: NoSchedule
+              - key: os
+                operator: Equal
+                value: windows22
+                effect: NoSchedule
+              - key: kubernetes.azure.com/scalesetpriority:
+                operator: Equal
+                value: spot
+                effect: NoSchedule
             affinity:
               nodeAffinity:
                 requiredDuringSchedulingIgnoredDuringExecution:
